@@ -11,6 +11,8 @@ import spiralLandscape from "@/assets/spiral.png.asset.json";
 import spiralPortrait from "@/assets/spiral-portrait.png.asset.json";
 import g01Landscape from "@/assets/g-01.png.asset.json";
 import g01Portrait from "@/assets/g-01-portrait.png.asset.json";
+import g01Video from "@/assets/g-01.mp4.asset.json";
+import g01VideoPortrait from "@/assets/g-01-portrait.mp4.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
