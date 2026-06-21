@@ -614,20 +614,16 @@ function Future() {
   return (
     <section className="relative min-h-[100svh] flex items-center overflow-hidden section-edge">
       <div className="absolute inset-0">
-        {/* video if available, else image */}
         <video
+          key={isDesktop ? "d" : "m"}
           autoPlay
           muted
           loop
           playsInline
           poster={isDesktop ? g01Landscape.url : g01Portrait.url}
+          src={isDesktop ? g01Video.url : g01VideoPortrait.url}
           className="w-full h-full object-cover"
-        >
-          <source
-            src={isDesktop ? new URL("@/assets/g-01.mp4.asset.json", import.meta.url).pathname : ""}
-            type="video/mp4"
-          />
-        </video>
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-obsidian/40 via-obsidian/55 to-obsidian" />
       </div>
 
