@@ -146,7 +146,8 @@ function Hero() {
           mobile={viePortrait}
           alt=""
           priority
-          className="h-full w-full object-cover animate-drift opacity-34"
+          className="h-full w-full object-cover animate-drift"
+          style={{ opacity: 0.34 }}
         />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_24%,rgba(255,255,255,0.08),transparent_0_18%,transparent_19%)]" />
         <div className="absolute inset-0 bg-gradient-to-r from-obsidian-deep via-obsidian/58 to-obsidian-deep/80" />
