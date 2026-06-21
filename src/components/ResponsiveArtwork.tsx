@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { useIsDesktop } from "@/hooks/use-is-desktop";
 
 interface Props {
@@ -6,10 +7,11 @@ interface Props {
   alt: string;
   className?: string;
   priority?: boolean;
+  style?: CSSProperties;
 }
 
 /** Loads landscape on desktop (>=1024px) and portrait on mobile. */
-export function ResponsiveArtwork({ desktop, mobile, alt, className, priority }: Props) {
+export function ResponsiveArtwork({ desktop, mobile, alt, className, priority, style }: Props) {
   const isDesktop = useIsDesktop();
   const src = isDesktop ? desktop.url : mobile.url;
   return (
@@ -17,6 +19,7 @@ export function ResponsiveArtwork({ desktop, mobile, alt, className, priority }:
       src={src}
       alt={alt}
       className={className}
+      style={style}
       loading={priority ? "eager" : "lazy"}
       decoding="async"
       draggable={false}
