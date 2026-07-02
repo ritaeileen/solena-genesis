@@ -465,7 +465,12 @@ function Ecosystem() {
               {SECTORS.map((sector, index) => {
                 const { x, y } = positions[index];
                 const isActive = active === index;
-                const scale = index % 3 === 0 ? 1.18 : index % 3 === 1 ? 1 : 0.96;
+                const isDimmed = active !== null && !isActive;
+                const scale = index % 3 === 0 ? 1.18 : index % 3 === 1 ? 1 : 0.94;
+                // radius as % of container; keep nodes clear of center anchor
+                const r = 42;
+                const left = 50 + x * r;
+                const top = 50 + y * r;
                 return (
                   <button
                     key={sector}
@@ -474,22 +479,45 @@ function Ecosystem() {
                     onMouseLeave={() => setActive(6)}
                     onFocus={() => setActive(index)}
                     onBlur={() => setActive(6)}
-                    className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
-                    style={{ transform: `translate(calc(${x * 44}% - 50%), calc(${y * 44}% - 50%))` }}
+                    className="absolute z-10 -translate-x-1/2 -translate-y-1/2 outline-none"
+                    style={{
+                      left: `${left}%`,
+                      top: `${top}%`,
+                      transition: "opacity 600ms cubic-bezier(0.16,1,0.3,1), filter 600ms cubic-bezier(0.16,1,0.3,1)",
+                      opacity: isDimmed ? 0.42 : 1,
+                      filter: isDimmed ? "blur(1px)" : "blur(0)",
+                    }}
                     aria-label={sector}
                   >
                     <div
-                      className={`glass-node flex rounded-full px-5 py-7 text-center transition duration-500 ${
-                        isActive ? "border-bronze/45 bg-white/[0.07] shadow-[0_0_0_1px_rgba(139,111,71,0.12)]" : "hover:scale-[1.03]"
-                      }`}
+                      className="glass-node flex items-center justify-center rounded-full text-center"
                       style={{
                         width: `${6.4 * scale}rem`,
                         height: `${6.4 * scale}rem`,
-                        alignItems: "center",
-                        justifyContent: "center",
+                        transition:
+                          "transform 700ms cubic-bezier(0.16,1,0.3,1), background-color 500ms ease, border-color 500ms ease, box-shadow 700ms ease",
+                        transform: isActive ? "scale(1.08)" : "scale(1)",
+                        borderColor: isActive
+                          ? "oklch(0.68 0.055 65 / 55%)"
+                          : "oklch(0.96 0.004 76 / 14%)",
+                        background: isActive
+                          ? "linear-gradient(180deg, oklch(0.97 0.004 76 / 12%), oklch(0.97 0.004 76 / 5%))"
+                          : undefined,
+                        boxShadow: isActive
+                          ? "0 0 0 1px oklch(0.68 0.055 65 / 20%), 0 24px 70px oklch(0.03 0.002 67 / 40%), inset 0 1px 0 oklch(0.99 0.004 76 / 10%)"
+                          : undefined,
                       }}
                     >
-                      <span className="font-sans text-[0.82rem] leading-tight text-ivory/86 lg:text-base">{sector}</span>
+                      <span
+                        className="font-sans text-[0.78rem] leading-tight tracking-[0.02em] lg:text-[0.95rem]"
+                        style={{
+                          color: isActive ? "var(--color-ivory)" : "oklch(0.83 0.011 76 / 76%)",
+                          transition: "color 500ms ease, letter-spacing 500ms ease",
+                          letterSpacing: isActive ? "0.06em" : "0.02em",
+                        }}
+                      >
+                        {sector}
+                      </span>
                     </div>
                   </button>
                 );
