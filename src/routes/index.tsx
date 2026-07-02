@@ -135,23 +135,52 @@ function Hero() {
       <div
         className="absolute inset-0 z-0"
         style={{
-          opacity: 1 - scroll * 0.55,
-          transform: `scale(${1 + scroll * 0.06})`,
-          filter: `blur(${scroll * 5}px)`,
-          transition: "filter 200ms linear",
+          opacity: 1 - scroll * 0.6,
+          transform: `translate3d(0, ${scroll * -40}px, 0) scale(${1 + scroll * 0.08})`,
+          filter: `blur(${scroll * 6}px)`,
+          transition: "filter 220ms linear",
+          willChange: "transform, opacity, filter",
         }}
       >
-        <ResponsiveArtwork
-          desktop={vieLandscape}
-          mobile={viePortrait}
-          alt=""
-          priority
-          className="h-full w-full object-cover animate-drift"
-          style={{ opacity: 0.34 }}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_24%,rgba(255,255,255,0.08),transparent_0_18%,transparent_19%)]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-obsidian-deep via-obsidian/58 to-obsidian-deep/80" />
-        <div className="absolute inset-0 bg-gradient-to-b from-obsidian/10 via-transparent to-obsidian-deep" />
+        <div
+          className="absolute inset-0 animate-drift"
+          style={{
+            mixBlendMode: "screen",
+            maskImage:
+              "radial-gradient(ellipse 68% 62% at 70% 38%, black 28%, transparent 78%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse 68% 62% at 70% 38%, black 28%, transparent 78%)",
+          }}
+        >
+          <ResponsiveArtwork
+            desktop={vieLandscape}
+            mobile={viePortrait}
+            alt=""
+            priority
+            className="h-full w-full object-cover"
+            style={{ opacity: 0.6, filter: "contrast(1.05) brightness(1.02)" }}
+          />
+        </div>
+        <div
+          className="absolute inset-0"
+          style={{
+            mixBlendMode: "screen",
+            opacity: 0.32,
+            filter: "blur(60px) saturate(115%)",
+            maskImage: "radial-gradient(circle at 72% 30%, black 0%, transparent 60%)",
+            WebkitMaskImage: "radial-gradient(circle at 72% 30%, black 0%, transparent 60%)",
+          }}
+        >
+          <ResponsiveArtwork
+            desktop={vieLandscape}
+            mobile={viePortrait}
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_26%,rgba(255,255,255,0.05),transparent_0_22%,transparent_23%)]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-obsidian-deep via-transparent to-obsidian-deep/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-obsidian-deep/40 via-transparent to-obsidian-deep" />
       </div>
 
       <div className="relative z-10 mx-auto grid max-w-7xl gap-16 px-6 pb-18 pt-20 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:px-12">
@@ -436,7 +465,12 @@ function Ecosystem() {
               {SECTORS.map((sector, index) => {
                 const { x, y } = positions[index];
                 const isActive = active === index;
-                const scale = index % 3 === 0 ? 1.18 : index % 3 === 1 ? 1 : 0.96;
+                const isDimmed = active !== null && !isActive;
+                const scale = index % 3 === 0 ? 1.18 : index % 3 === 1 ? 1 : 0.94;
+                // radius as % of container; keep nodes clear of center anchor
+                const r = 42;
+                const left = 50 + x * r;
+                const top = 50 + y * r;
                 return (
                   <button
                     key={sector}
@@ -445,22 +479,45 @@ function Ecosystem() {
                     onMouseLeave={() => setActive(6)}
                     onFocus={() => setActive(index)}
                     onBlur={() => setActive(6)}
-                    className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
-                    style={{ transform: `translate(calc(${x * 44}% - 50%), calc(${y * 44}% - 50%))` }}
+                    className="absolute z-10 -translate-x-1/2 -translate-y-1/2 outline-none"
+                    style={{
+                      left: `${left}%`,
+                      top: `${top}%`,
+                      transition: "opacity 600ms cubic-bezier(0.16,1,0.3,1), filter 600ms cubic-bezier(0.16,1,0.3,1)",
+                      opacity: isDimmed ? 0.42 : 1,
+                      filter: isDimmed ? "blur(1px)" : "blur(0)",
+                    }}
                     aria-label={sector}
                   >
                     <div
-                      className={`glass-node flex rounded-full px-5 py-7 text-center transition duration-500 ${
-                        isActive ? "border-bronze/45 bg-white/[0.07] shadow-[0_0_0_1px_rgba(139,111,71,0.12)]" : "hover:scale-[1.03]"
-                      }`}
+                      className="glass-node flex items-center justify-center rounded-full text-center"
                       style={{
                         width: `${6.4 * scale}rem`,
                         height: `${6.4 * scale}rem`,
-                        alignItems: "center",
-                        justifyContent: "center",
+                        transition:
+                          "transform 700ms cubic-bezier(0.16,1,0.3,1), background-color 500ms ease, border-color 500ms ease, box-shadow 700ms ease",
+                        transform: isActive ? "scale(1.08)" : "scale(1)",
+                        borderColor: isActive
+                          ? "oklch(0.68 0.055 65 / 55%)"
+                          : "oklch(0.96 0.004 76 / 14%)",
+                        background: isActive
+                          ? "linear-gradient(180deg, oklch(0.97 0.004 76 / 12%), oklch(0.97 0.004 76 / 5%))"
+                          : undefined,
+                        boxShadow: isActive
+                          ? "0 0 0 1px oklch(0.68 0.055 65 / 20%), 0 24px 70px oklch(0.03 0.002 67 / 40%), inset 0 1px 0 oklch(0.99 0.004 76 / 10%)"
+                          : undefined,
                       }}
                     >
-                      <span className="font-sans text-[0.82rem] leading-tight text-ivory/86 lg:text-base">{sector}</span>
+                      <span
+                        className="font-sans text-[0.78rem] leading-tight tracking-[0.02em] lg:text-[0.95rem]"
+                        style={{
+                          color: isActive ? "var(--color-ivory)" : "oklch(0.83 0.011 76 / 76%)",
+                          transition: "color 500ms ease, letter-spacing 500ms ease",
+                          letterSpacing: isActive ? "0.06em" : "0.02em",
+                        }}
+                      >
+                        {sector}
+                      </span>
                     </div>
                   </button>
                 );
