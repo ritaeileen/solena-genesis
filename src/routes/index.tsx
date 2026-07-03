@@ -543,12 +543,14 @@ function Ecosystem() {
                 return (
                   <button
                     key={sector}
+                    ref={(el) => { nodeRefs.current[index] = el; }}
                     type="button"
                     onMouseEnter={() => setActive(index)}
                     onMouseLeave={() => setActive(6)}
                     onFocus={() => setActive(index)}
                     onBlur={() => setActive(6)}
-                    className="absolute z-10 -translate-x-1/2 -translate-y-1/2 outline-none"
+                    onKeyDown={(e) => onNodeKeyDown(e, index)}
+                    className="absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-bronze-glow/70 focus-visible:ring-offset-4 focus-visible:ring-offset-obsidian-deep"
                     style={{
                       left: `${left}%`,
                       top: `${top}%`,
@@ -558,7 +560,8 @@ function Ecosystem() {
                       opacity: isDimmed ? (reducedMotion ? 0.62 : 0.42) : 1,
                       filter: isDimmed && !reducedMotion ? "blur(1px)" : "blur(0)",
                     }}
-                    aria-label={sector}
+                    aria-label={`${sector} — sector ${index + 1} of ${SECTORS.length}`}
+                    aria-pressed={isActive}
                   >
                     <div
                       className="glass-node flex items-center justify-center rounded-full text-center"
