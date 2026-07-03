@@ -476,7 +476,16 @@ function Ecosystem() {
             </p>
             <div className="space-y-2 pt-2">
               <p className="text-[10px] tracking-eyebrow text-stone/48">Active sector</p>
-              <p className="font-display text-4xl text-ivory md:text-5xl">{active !== null ? SECTORS[active] : "—"}</p>
+              <p
+                className="font-display text-4xl text-ivory md:text-5xl"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {active !== null ? SECTORS[active] : "—"}
+              </p>
+              <p className="pt-3 text-[10px] tracking-eyebrow text-stone/40">
+                Use arrow keys to traverse · Esc to release
+              </p>
             </div>
           </div>
 
