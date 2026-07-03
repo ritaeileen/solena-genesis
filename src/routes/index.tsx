@@ -685,13 +685,14 @@ function Journal() {
 
 function Future() {
   const isDesktop = useIsDesktop();
+  const reducedMotion = useReducedMotion();
 
   return (
     <section className="section-edge relative flex min-h-[100svh] items-center overflow-hidden py-24">
       <div className="absolute inset-0">
         <video
           key={isDesktop ? "desktop-video" : "mobile-video"}
-          autoPlay
+          autoPlay={!reducedMotion}
           muted
           loop
           playsInline
