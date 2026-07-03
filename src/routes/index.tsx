@@ -405,6 +405,7 @@ function PillarCard({ n, title, hover, delay }: { n: string; title: string; hove
 function Ecosystem() {
   const reducedMotion = useReducedMotion();
   const [active, setActive] = useState<number | null>(6);
+  const nodeRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const positions = useMemo(
     () =>
@@ -414,6 +415,39 @@ function Ecosystem() {
       }),
     [],
   );
+
+  const focusNode = (index: number) => {
+    const next = ((index % SECTORS.length) + SECTORS.length) % SECTORS.length;
+    nodeRefs.current[next]?.focus();
+  };
+
+  const onNodeKeyDown = (e: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    switch (e.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        e.preventDefault();
+        focusNode(index + 1);
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        e.preventDefault();
+        focusNode(index - 1);
+        break;
+      case "Home":
+        e.preventDefault();
+        focusNode(0);
+        break;
+      case "End":
+        e.preventDefault();
+        focusNode(SECTORS.length - 1);
+        break;
+      case "Escape":
+        e.preventDefault();
+        (e.currentTarget as HTMLButtonElement).blur();
+        setActive(6);
+        break;
+    }
+  };
 
   return (
     <section id="ecosystem" className="section-edge orbital-stage relative overflow-hidden py-40 lg:py-64">
