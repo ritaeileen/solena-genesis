@@ -130,7 +130,7 @@ function Nav({ onOpenAccess }: { onOpenAccess: () => void }) {
   );
 }
 
-function Hero() {
+function Hero({ onOpenAccess }: { onOpenAccess: () => void }) {
   const reducedMotion = useReducedMotion();
   const [scroll, setScroll] = useState(0);
 
