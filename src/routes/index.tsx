@@ -399,6 +399,7 @@ function PillarCard({ n, title, hover, delay }: { n: string; title: string; hove
 }
 
 function Ecosystem() {
+  const reducedMotion = useReducedMotion();
   const [active, setActive] = useState<number | null>(6);
 
   const positions = useMemo(
