@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type RefObject } from "react";
 import { useReveal } from "@/hooks/use-reveal";
 import { useIsDesktop } from "@/hooks/use-is-desktop";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { ResponsiveArtwork } from "@/components/ResponsiveArtwork";
 
 import logo from "@/assets/solena-logo.png.asset.json";
