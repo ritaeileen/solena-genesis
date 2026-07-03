@@ -742,7 +742,7 @@ function Future() {
   );
 }
 
-function Invitation() {
+function Invitation({ onOpenAccess }: { onOpenAccess: () => void }) {
   return (
     <section id="invitation" className="relative bg-obsidian-deep py-44 lg:py-72">
       <div className="mx-auto max-w-4xl px-6 text-center lg:px-12">
