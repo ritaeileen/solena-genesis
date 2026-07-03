@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState, type RefObject } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type RefObject } from "react";
 import { useReveal } from "@/hooks/use-reveal";
 import { useIsDesktop } from "@/hooks/use-is-desktop";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { ResponsiveArtwork } from "@/components/ResponsiveArtwork";
+import { RequestAccessModal } from "@/components/RequestAccessModal";
 
 import logo from "@/assets/solena-logo.png.asset.json";
 import vieLandscape from "@/assets/vie-halo.png.asset.json";
