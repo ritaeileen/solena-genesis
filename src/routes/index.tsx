@@ -81,6 +81,8 @@ const ARTICLES = [
 function SolenaLanding() {
   const root = useReveal();
   const reducedMotion = useReducedMotion();
+  const [accessOpen, setAccessOpen] = useState(false);
+  const openAccess = useCallback(() => setAccessOpen(true), []);
 
   return (
     <main
@@ -89,8 +91,8 @@ function SolenaLanding() {
       className="page-shell relative overflow-hidden bg-obsidian-deep text-ivory"
     >
       <div className="ambient-fog" />
-      <Nav />
-      <Hero />
+      <Nav onOpenAccess={openAccess} />
+      <Hero onOpenAccess={openAccess} />
       <Thesis />
       <WhatWeBuild />
       <Ecosystem />
@@ -98,13 +100,14 @@ function SolenaLanding() {
       <Transformations />
       <Journal />
       <Future />
-      <Invitation />
+      <Invitation onOpenAccess={openAccess} />
       <Footer />
+      <RequestAccessModal open={accessOpen} onOpenChange={setAccessOpen} />
     </main>
   );
 }
 
-function Nav() {
+function Nav({ onOpenAccess }: { onOpenAccess: () => void }) {
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-12">
