@@ -121,7 +121,7 @@ function Nav({ onOpenAccess }: { onOpenAccess: () => void }) {
           <a href="#build" className="transition hover:text-ivory">Practice</a>
           <a href="#ecosystem" className="transition hover:text-ivory">Ecosystem</a>
           <a href="#journal" className="transition hover:text-ivory">Journal</a>
-          <a href="#invitation" className="transition hover:text-ivory">Access</a>
+          <button type="button" onClick={onOpenAccess} className="transition hover:text-ivory">Access</button>
         </nav>
 
         <div className="hidden text-[10px] tracking-eyebrow text-stone/46 md:block">MMXXV · By invitation</div>
