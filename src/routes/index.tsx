@@ -505,7 +505,11 @@ function Ecosystem() {
 
             <div className="absolute bottom-8 right-0 hidden lg:block side-rail">↑ To Navigate</div>
 
-            <div className="relative ml-auto aspect-square w-full max-w-[720px]">
+            <div
+              className="relative ml-auto aspect-square w-full max-w-[720px]"
+              role="group"
+              aria-label="Solena ecosystem — sectors orbiting the studio anchor. Use arrow keys to traverse."
+            >
               {[1.12, 0.83, 0.58, 0.34].map((size, index) => (
                 <div
                   key={size}
