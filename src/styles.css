@@ -430,3 +430,61 @@ body::before {
   gap: 0.75rem;
   transition: all 240ms ease;
 }
+
+/* Reduced motion: calm the experience while preserving meaning */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-drift,
+  .animate-ring,
+  .animate-pulse-slow {
+    animation: none !important;
+  }
+
+  .reveal {
+    transform: translateY(0) !important;
+    filter: blur(0) !important;
+  }
+
+  .btn-solena:hover .label-main,
+  .btn-solena:hover .label-hover {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .btn-solena:hover .label-hover {
+    opacity: 0 !important;
+  }
+
+  .group:hover .max-h-0 {
+    transition-duration: 200ms !important;
+  }
+}
+
+[data-reduced-motion] .animate-drift,
+[data-reduced-motion] .animate-ring,
+[data-reduced-motion] .animate-pulse-slow {
+  animation: none !important;
+}
+
+[data-reduced-motion] .reveal {
+  transform: translateY(0) !important;
+  filter: blur(0) !important;
+}
+
+[data-reduced-motion] .btn-solena:hover .label-main,
+[data-reduced-motion] .btn-solena:hover .label-hover {
+  transform: none !important;
+  opacity: 1 !important;
+}
+
+[data-reduced-motion] .btn-solena:hover .label-hover {
+  opacity: 0 !important;
+}
+
+[data-reduced-motion] .group:hover .max-h-0 {
+  transition-duration: 200ms !important;
+}
+

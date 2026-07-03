@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type RefObject } from "react";
 import { useReveal } from "@/hooks/use-reveal";
 import { useIsDesktop } from "@/hooks/use-is-desktop";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { ResponsiveArtwork } from "@/components/ResponsiveArtwork";
 
 import logo from "@/assets/solena-logo.png.asset.json";
@@ -78,9 +79,14 @@ const ARTICLES = [
 
 function SolenaLanding() {
   const root = useReveal();
+  const reducedMotion = useReducedMotion();
 
   return (
-    <main ref={root as RefObject<HTMLElement>} className="page-shell relative overflow-hidden bg-obsidian-deep text-ivory">
+    <main
+      ref={root as RefObject<HTMLElement>}
+      data-reduced-motion={reducedMotion || undefined}
+      className="page-shell relative overflow-hidden bg-obsidian-deep text-ivory"
+    >
       <div className="ambient-fog" />
       <Nav />
       <Hero />
@@ -121,6 +127,7 @@ function Nav() {
 }
 
 function Hero() {
+  const reducedMotion = useReducedMotion();
   const [scroll, setScroll] = useState(0);
 
   useEffect(() => {
@@ -130,20 +137,30 @@ function Hero() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const haloMotion = reducedMotion
+    ? {
+        opacity: 1 - scroll * 0.35,
+        transform: "translate3d(0, 0, 0) scale(1)",
+        filter: "blur(0px)",
+      }
+    : {
+        opacity: 1 - scroll * 0.6,
+        transform: `translate3d(0, ${scroll * -40}px, 0) scale(${1 + scroll * 0.08})`,
+        filter: `blur(${scroll * 6}px)`,
+      };
+
   return (
     <section id="top" className="orbital-stage relative flex min-h-[100svh] items-center overflow-hidden pt-28">
       <div
         className="absolute inset-0 z-0"
         style={{
-          opacity: 1 - scroll * 0.6,
-          transform: `translate3d(0, ${scroll * -40}px, 0) scale(${1 + scroll * 0.08})`,
-          filter: `blur(${scroll * 6}px)`,
-          transition: "filter 220ms linear",
-          willChange: "transform, opacity, filter",
+          ...haloMotion,
+          transition: reducedMotion ? "opacity 240ms linear" : "filter 220ms linear",
+          willChange: reducedMotion ? "opacity" : "transform, opacity, filter",
         }}
       >
         <div
-          className="absolute inset-0 animate-drift"
+          className={`absolute inset-0 ${reducedMotion ? "" : "animate-drift"}`}
           style={{
             mixBlendMode: "screen",
             maskImage:
@@ -158,7 +175,7 @@ function Hero() {
             alt=""
             priority
             className="h-full w-full object-cover"
-            style={{ opacity: 0.6, filter: "contrast(1.05) brightness(1.02)" }}
+            style={{ opacity: reducedMotion ? 0.45 : 0.6, filter: reducedMotion ? "contrast(1.02)" : "contrast(1.05) brightness(1.02)" }}
           />
         </div>
         <div
@@ -228,7 +245,7 @@ function Hero() {
         <div className="order-1 flex items-center justify-end lg:order-2">
           <div className="reveal relative hidden h-[520px] w-full max-w-[760px] lg:block">
             <div className="absolute inset-y-0 right-0 flex w-full items-center justify-end">
-              <div className="relative h-[520px] w-[520px] rounded-full border border-ivory/10 animate-ring">
+              <div className={`relative h-[520px] w-[520px] rounded-full border border-ivory/10 ${reducedMotion ? "" : "animate-ring"}`}>
                 <div className="absolute inset-[9%] rounded-full border border-ivory/7" />
                 <div className="absolute inset-[22%] rounded-full border border-ivory/7" />
                 <div className="absolute inset-[34%] rounded-full border border-ivory/7" />
@@ -382,6 +399,7 @@ function PillarCard({ n, title, hover, delay }: { n: string; title: string; hove
 }
 
 function Ecosystem() {
+  const reducedMotion = useReducedMotion();
   const [active, setActive] = useState<number | null>(6);
 
   const positions = useMemo(
@@ -455,7 +473,7 @@ function Ecosystem() {
 
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                 <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-bronze/10 blur-3xl animate-pulse-slow" />
+                  <div className={`absolute inset-0 rounded-full bg-bronze/10 blur-3xl ${reducedMotion ? "" : "animate-pulse-slow"}`} />
                   <div className="glass-strong relative flex h-32 w-32 items-center justify-center rounded-full sm:h-40 sm:w-40 lg:h-52 lg:w-52">
                     <span className="font-display text-[1.8rem] tracking-[0.08em] text-ivory/92 lg:text-[2.7rem]">SOLENA</span>
                   </div>
@@ -483,9 +501,11 @@ function Ecosystem() {
                     style={{
                       left: `${left}%`,
                       top: `${top}%`,
-                      transition: "opacity 600ms cubic-bezier(0.16,1,0.3,1), filter 600ms cubic-bezier(0.16,1,0.3,1)",
-                      opacity: isDimmed ? 0.42 : 1,
-                      filter: isDimmed ? "blur(1px)" : "blur(0)",
+                      transition: reducedMotion
+                        ? "opacity 180ms ease, filter 180ms ease"
+                        : "opacity 600ms cubic-bezier(0.16,1,0.3,1), filter 600ms cubic-bezier(0.16,1,0.3,1)",
+                      opacity: isDimmed ? (reducedMotion ? 0.62 : 0.42) : 1,
+                      filter: isDimmed && !reducedMotion ? "blur(1px)" : "blur(0)",
                     }}
                     aria-label={sector}
                   >
@@ -494,16 +514,17 @@ function Ecosystem() {
                       style={{
                         width: `${6.4 * scale}rem`,
                         height: `${6.4 * scale}rem`,
-                        transition:
-                          "transform 700ms cubic-bezier(0.16,1,0.3,1), background-color 500ms ease, border-color 500ms ease, box-shadow 700ms ease",
-                        transform: isActive ? "scale(1.08)" : "scale(1)",
+                        transition: reducedMotion
+                          ? "border-color 180ms ease, background-color 180ms ease"
+                          : "transform 700ms cubic-bezier(0.16,1,0.3,1), background-color 500ms ease, border-color 500ms ease, box-shadow 700ms ease",
+                        transform: isActive && !reducedMotion ? "scale(1.08)" : "scale(1)",
                         borderColor: isActive
                           ? "oklch(0.68 0.055 65 / 55%)"
                           : "oklch(0.96 0.004 76 / 14%)",
                         background: isActive
                           ? "linear-gradient(180deg, oklch(0.97 0.004 76 / 12%), oklch(0.97 0.004 76 / 5%))"
                           : undefined,
-                        boxShadow: isActive
+                        boxShadow: isActive && !reducedMotion
                           ? "0 0 0 1px oklch(0.68 0.055 65 / 20%), 0 24px 70px oklch(0.03 0.002 67 / 40%), inset 0 1px 0 oklch(0.99 0.004 76 / 10%)"
                           : undefined,
                       }}
@@ -512,8 +533,8 @@ function Ecosystem() {
                         className="font-sans text-[0.78rem] leading-tight tracking-[0.02em] lg:text-[0.95rem]"
                         style={{
                           color: isActive ? "var(--color-ivory)" : "oklch(0.83 0.011 76 / 76%)",
-                          transition: "color 500ms ease, letter-spacing 500ms ease",
-                          letterSpacing: isActive ? "0.06em" : "0.02em",
+                          transition: reducedMotion ? "color 180ms ease" : "color 500ms ease, letter-spacing 500ms ease",
+                          letterSpacing: isActive && !reducedMotion ? "0.06em" : "0.02em",
                         }}
                       >
                         {sector}
@@ -664,13 +685,14 @@ function Journal() {
 
 function Future() {
   const isDesktop = useIsDesktop();
+  const reducedMotion = useReducedMotion();
 
   return (
     <section className="section-edge relative flex min-h-[100svh] items-center overflow-hidden py-24">
       <div className="absolute inset-0">
         <video
           key={isDesktop ? "desktop-video" : "mobile-video"}
-          autoPlay
+          autoPlay={!reducedMotion}
           muted
           loop
           playsInline
