@@ -232,7 +232,7 @@ function Hero({ onOpenAccess }: { onOpenAccess: () => void }) {
           </div>
 
           <div className="animate-rise mt-4 flex flex-col items-start gap-5" style={{ animationDelay: "620ms" }}>
-            <a href="#invitation" className="btn-solena">
+            <button type="button" onClick={onOpenAccess} className="btn-solena">
               <span className="label-main">
                 Enter the Ecosystem
                 <span className="arrow">→</span>
@@ -241,7 +241,7 @@ function Hero({ onOpenAccess }: { onOpenAccess: () => void }) {
                 Cross the threshold
                 <span className="arrow">→</span>
               </span>
-            </a>
+            </button>
             <p className="text-[10px] tracking-eyebrow text-stone/42">Access is selective</p>
           </div>
         </div>
