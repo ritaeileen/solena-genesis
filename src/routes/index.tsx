@@ -127,6 +127,7 @@ function Nav() {
 }
 
 function Hero() {
+  const reducedMotion = useReducedMotion();
   const [scroll, setScroll] = useState(0);
 
   useEffect(() => {
@@ -136,16 +137,26 @@ function Hero() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const haloMotion = reducedMotion
+    ? {
+        opacity: 1 - scroll * 0.35,
+        transform: "translate3d(0, 0, 0) scale(1)",
+        filter: "blur(0px)",
+      }
+    : {
+        opacity: 1 - scroll * 0.6,
+        transform: `translate3d(0, ${scroll * -40}px, 0) scale(${1 + scroll * 0.08})`,
+        filter: `blur(${scroll * 6}px)`,
+      };
+
   return (
     <section id="top" className="orbital-stage relative flex min-h-[100svh] items-center overflow-hidden pt-28">
       <div
         className="absolute inset-0 z-0"
         style={{
-          opacity: 1 - scroll * 0.6,
-          transform: `translate3d(0, ${scroll * -40}px, 0) scale(${1 + scroll * 0.08})`,
-          filter: `blur(${scroll * 6}px)`,
-          transition: "filter 220ms linear",
-          willChange: "transform, opacity, filter",
+          ...haloMotion,
+          transition: reducedMotion ? "opacity 240ms linear" : "filter 220ms linear",
+          willChange: reducedMotion ? "opacity" : "transform, opacity, filter",
         }}
       >
         <div
