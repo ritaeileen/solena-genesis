@@ -245,7 +245,7 @@ function Hero() {
         <div className="order-1 flex items-center justify-end lg:order-2">
           <div className="reveal relative hidden h-[520px] w-full max-w-[760px] lg:block">
             <div className="absolute inset-y-0 right-0 flex w-full items-center justify-end">
-              <div className="relative h-[520px] w-[520px] rounded-full border border-ivory/10 animate-ring">
+              <div className={`relative h-[520px] w-[520px] rounded-full border border-ivory/10 ${reducedMotion ? "" : "animate-ring"}`}>
                 <div className="absolute inset-[9%] rounded-full border border-ivory/7" />
                 <div className="absolute inset-[22%] rounded-full border border-ivory/7" />
                 <div className="absolute inset-[34%] rounded-full border border-ivory/7" />
