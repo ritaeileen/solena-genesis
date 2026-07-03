@@ -473,7 +473,7 @@ function Ecosystem() {
 
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                 <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-bronze/10 blur-3xl animate-pulse-slow" />
+                  <div className={`absolute inset-0 rounded-full bg-bronze/10 blur-3xl ${reducedMotion ? "" : "animate-pulse-slow"}`} />
                   <div className="glass-strong relative flex h-32 w-32 items-center justify-center rounded-full sm:h-40 sm:w-40 lg:h-52 lg:w-52">
                     <span className="font-display text-[1.8rem] tracking-[0.08em] text-ivory/92 lg:text-[2.7rem]">SOLENA</span>
                   </div>
