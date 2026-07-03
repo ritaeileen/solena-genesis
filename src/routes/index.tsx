@@ -160,7 +160,7 @@ function Hero() {
         }}
       >
         <div
-          className="absolute inset-0 animate-drift"
+          className={`absolute inset-0 ${reducedMotion ? "" : "animate-drift"}`}
           style={{
             mixBlendMode: "screen",
             maskImage:
@@ -175,7 +175,7 @@ function Hero() {
             alt=""
             priority
             className="h-full w-full object-cover"
-            style={{ opacity: 0.6, filter: "contrast(1.05) brightness(1.02)" }}
+            style={{ opacity: reducedMotion ? 0.45 : 0.6, filter: reducedMotion ? "contrast(1.02)" : "contrast(1.05) brightness(1.02)" }}
           />
         </div>
         <div
