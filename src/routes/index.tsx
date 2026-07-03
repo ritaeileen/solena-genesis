@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState, type RefObject } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type RefObject } from "react";
 import { useReveal } from "@/hooks/use-reveal";
 import { useIsDesktop } from "@/hooks/use-is-desktop";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { ResponsiveArtwork } from "@/components/ResponsiveArtwork";
+import { RequestAccessModal } from "@/components/RequestAccessModal";
 
 import logo from "@/assets/solena-logo.png.asset.json";
 import vieLandscape from "@/assets/vie-halo.png.asset.json";
@@ -80,6 +81,8 @@ const ARTICLES = [
 function SolenaLanding() {
   const root = useReveal();
   const reducedMotion = useReducedMotion();
+  const [accessOpen, setAccessOpen] = useState(false);
+  const openAccess = useCallback(() => setAccessOpen(true), []);
 
   return (
     <main
@@ -88,8 +91,8 @@ function SolenaLanding() {
       className="page-shell relative overflow-hidden bg-obsidian-deep text-ivory"
     >
       <div className="ambient-fog" />
-      <Nav />
-      <Hero />
+      <Nav onOpenAccess={openAccess} />
+      <Hero onOpenAccess={openAccess} />
       <Thesis />
       <WhatWeBuild />
       <Ecosystem />
@@ -97,13 +100,14 @@ function SolenaLanding() {
       <Transformations />
       <Journal />
       <Future />
-      <Invitation />
+      <Invitation onOpenAccess={openAccess} />
       <Footer />
+      <RequestAccessModal open={accessOpen} onOpenChange={setAccessOpen} />
     </main>
   );
 }
 
-function Nav() {
+function Nav({ onOpenAccess }: { onOpenAccess: () => void }) {
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-12">
@@ -117,7 +121,7 @@ function Nav() {
           <a href="#build" className="transition hover:text-ivory">Practice</a>
           <a href="#ecosystem" className="transition hover:text-ivory">Ecosystem</a>
           <a href="#journal" className="transition hover:text-ivory">Journal</a>
-          <a href="#invitation" className="transition hover:text-ivory">Access</a>
+          <button type="button" onClick={onOpenAccess} className="transition hover:text-ivory">Access</button>
         </nav>
 
         <div className="hidden text-[10px] tracking-eyebrow text-stone/46 md:block">MMXXV · By invitation</div>
@@ -126,7 +130,7 @@ function Nav() {
   );
 }
 
-function Hero() {
+function Hero({ onOpenAccess }: { onOpenAccess: () => void }) {
   const reducedMotion = useReducedMotion();
   const [scroll, setScroll] = useState(0);
 
@@ -228,7 +232,7 @@ function Hero() {
           </div>
 
           <div className="animate-rise mt-4 flex flex-col items-start gap-5" style={{ animationDelay: "620ms" }}>
-            <a href="#invitation" className="btn-solena">
+            <button type="button" onClick={onOpenAccess} className="btn-solena">
               <span className="label-main">
                 Enter the Ecosystem
                 <span className="arrow">→</span>
@@ -237,7 +241,7 @@ function Hero() {
                 Cross the threshold
                 <span className="arrow">→</span>
               </span>
-            </a>
+            </button>
             <p className="text-[10px] tracking-eyebrow text-stone/42">Access is selective</p>
           </div>
         </div>
@@ -401,6 +405,7 @@ function PillarCard({ n, title, hover, delay }: { n: string; title: string; hove
 function Ecosystem() {
   const reducedMotion = useReducedMotion();
   const [active, setActive] = useState<number | null>(6);
+  const nodeRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const positions = useMemo(
     () =>
@@ -410,6 +415,39 @@ function Ecosystem() {
       }),
     [],
   );
+
+  const focusNode = (index: number) => {
+    const next = ((index % SECTORS.length) + SECTORS.length) % SECTORS.length;
+    nodeRefs.current[next]?.focus();
+  };
+
+  const onNodeKeyDown = (e: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    switch (e.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        e.preventDefault();
+        focusNode(index + 1);
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        e.preventDefault();
+        focusNode(index - 1);
+        break;
+      case "Home":
+        e.preventDefault();
+        focusNode(0);
+        break;
+      case "End":
+        e.preventDefault();
+        focusNode(SECTORS.length - 1);
+        break;
+      case "Escape":
+        e.preventDefault();
+        (e.currentTarget as HTMLButtonElement).blur();
+        setActive(6);
+        break;
+    }
+  };
 
   return (
     <section id="ecosystem" className="section-edge orbital-stage relative overflow-hidden py-40 lg:py-64">
@@ -438,7 +476,16 @@ function Ecosystem() {
             </p>
             <div className="space-y-2 pt-2">
               <p className="text-[10px] tracking-eyebrow text-stone/48">Active sector</p>
-              <p className="font-display text-4xl text-ivory md:text-5xl">{active !== null ? SECTORS[active] : "—"}</p>
+              <p
+                className="font-display text-4xl text-ivory md:text-5xl"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {active !== null ? SECTORS[active] : "—"}
+              </p>
+              <p className="pt-3 text-[10px] tracking-eyebrow text-stone/40">
+                Use arrow keys to traverse · Esc to release
+              </p>
             </div>
           </div>
 
@@ -458,7 +505,11 @@ function Ecosystem() {
 
             <div className="absolute bottom-8 right-0 hidden lg:block side-rail">↑ To Navigate</div>
 
-            <div className="relative ml-auto aspect-square w-full max-w-[720px]">
+            <div
+              className="relative ml-auto aspect-square w-full max-w-[720px]"
+              role="group"
+              aria-label="Solena ecosystem — sectors orbiting the studio anchor. Use arrow keys to traverse."
+            >
               {[1.12, 0.83, 0.58, 0.34].map((size, index) => (
                 <div
                   key={size}
@@ -492,12 +543,14 @@ function Ecosystem() {
                 return (
                   <button
                     key={sector}
+                    ref={(el) => { nodeRefs.current[index] = el; }}
                     type="button"
                     onMouseEnter={() => setActive(index)}
                     onMouseLeave={() => setActive(6)}
                     onFocus={() => setActive(index)}
                     onBlur={() => setActive(6)}
-                    className="absolute z-10 -translate-x-1/2 -translate-y-1/2 outline-none"
+                    onKeyDown={(e) => onNodeKeyDown(e, index)}
+                    className="absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-bronze-glow/70 focus-visible:ring-offset-4 focus-visible:ring-offset-obsidian-deep"
                     style={{
                       left: `${left}%`,
                       top: `${top}%`,
@@ -507,7 +560,8 @@ function Ecosystem() {
                       opacity: isDimmed ? (reducedMotion ? 0.62 : 0.42) : 1,
                       filter: isDimmed && !reducedMotion ? "blur(1px)" : "blur(0)",
                     }}
-                    aria-label={sector}
+                    aria-label={`${sector} — sector ${index + 1} of ${SECTORS.length}`}
+                    aria-pressed={isActive}
                   >
                     <div
                       className="glass-node flex items-center justify-center rounded-full text-center"
@@ -738,7 +792,7 @@ function Future() {
   );
 }
 
-function Invitation() {
+function Invitation({ onOpenAccess }: { onOpenAccess: () => void }) {
   return (
     <section id="invitation" className="relative bg-obsidian-deep py-44 lg:py-72">
       <div className="mx-auto max-w-4xl px-6 text-center lg:px-12">
@@ -759,7 +813,7 @@ function Invitation() {
         </p>
 
         <div className="reveal reveal-delay-2 mt-16 flex flex-col items-center gap-5">
-          <a href="mailto:access@solena.studio" className="btn-solena">
+          <button type="button" onClick={onOpenAccess} className="btn-solena">
             <span className="label-main">
               Request Access
               <span className="arrow">→</span>
@@ -768,7 +822,7 @@ function Invitation() {
               Signal alignment
               <span className="arrow">→</span>
             </span>
-          </a>
+          </button>
           <p className="text-[10px] tracking-eyebrow text-stone/40">Not everyone will be reviewed</p>
         </div>
 
