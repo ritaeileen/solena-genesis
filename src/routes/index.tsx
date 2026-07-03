@@ -501,9 +501,11 @@ function Ecosystem() {
                     style={{
                       left: `${left}%`,
                       top: `${top}%`,
-                      transition: "opacity 600ms cubic-bezier(0.16,1,0.3,1), filter 600ms cubic-bezier(0.16,1,0.3,1)",
-                      opacity: isDimmed ? 0.42 : 1,
-                      filter: isDimmed ? "blur(1px)" : "blur(0)",
+                      transition: reducedMotion
+                        ? "opacity 180ms ease, filter 180ms ease"
+                        : "opacity 600ms cubic-bezier(0.16,1,0.3,1), filter 600ms cubic-bezier(0.16,1,0.3,1)",
+                      opacity: isDimmed ? (reducedMotion ? 0.62 : 0.42) : 1,
+                      filter: isDimmed && !reducedMotion ? "blur(1px)" : "blur(0)",
                     }}
                     aria-label={sector}
                   >
@@ -512,16 +514,17 @@ function Ecosystem() {
                       style={{
                         width: `${6.4 * scale}rem`,
                         height: `${6.4 * scale}rem`,
-                        transition:
-                          "transform 700ms cubic-bezier(0.16,1,0.3,1), background-color 500ms ease, border-color 500ms ease, box-shadow 700ms ease",
-                        transform: isActive ? "scale(1.08)" : "scale(1)",
+                        transition: reducedMotion
+                          ? "border-color 180ms ease, background-color 180ms ease"
+                          : "transform 700ms cubic-bezier(0.16,1,0.3,1), background-color 500ms ease, border-color 500ms ease, box-shadow 700ms ease",
+                        transform: isActive && !reducedMotion ? "scale(1.08)" : "scale(1)",
                         borderColor: isActive
                           ? "oklch(0.68 0.055 65 / 55%)"
                           : "oklch(0.96 0.004 76 / 14%)",
                         background: isActive
                           ? "linear-gradient(180deg, oklch(0.97 0.004 76 / 12%), oklch(0.97 0.004 76 / 5%))"
                           : undefined,
-                        boxShadow: isActive
+                        boxShadow: isActive && !reducedMotion
                           ? "0 0 0 1px oklch(0.68 0.055 65 / 20%), 0 24px 70px oklch(0.03 0.002 67 / 40%), inset 0 1px 0 oklch(0.99 0.004 76 / 10%)"
                           : undefined,
                       }}
@@ -530,8 +533,8 @@ function Ecosystem() {
                         className="font-sans text-[0.78rem] leading-tight tracking-[0.02em] lg:text-[0.95rem]"
                         style={{
                           color: isActive ? "var(--color-ivory)" : "oklch(0.83 0.011 76 / 76%)",
-                          transition: "color 500ms ease, letter-spacing 500ms ease",
-                          letterSpacing: isActive ? "0.06em" : "0.02em",
+                          transition: reducedMotion ? "color 180ms ease" : "color 500ms ease, letter-spacing 500ms ease",
+                          letterSpacing: isActive && !reducedMotion ? "0.06em" : "0.02em",
                         }}
                       >
                         {sector}
