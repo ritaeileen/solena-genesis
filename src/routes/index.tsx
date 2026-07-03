@@ -763,7 +763,7 @@ function Invitation({ onOpenAccess }: { onOpenAccess: () => void }) {
         </p>
 
         <div className="reveal reveal-delay-2 mt-16 flex flex-col items-center gap-5">
-          <a href="mailto:access@solena.studio" className="btn-solena">
+          <button type="button" onClick={onOpenAccess} className="btn-solena">
             <span className="label-main">
               Request Access
               <span className="arrow">→</span>
@@ -772,7 +772,7 @@ function Invitation({ onOpenAccess }: { onOpenAccess: () => void }) {
               Signal alignment
               <span className="arrow">→</span>
             </span>
-          </a>
+          </button>
           <p className="text-[10px] tracking-eyebrow text-stone/40">Not everyone will be reviewed</p>
         </div>
 
