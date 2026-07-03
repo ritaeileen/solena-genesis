@@ -79,9 +79,14 @@ const ARTICLES = [
 
 function SolenaLanding() {
   const root = useReveal();
+  const reducedMotion = useReducedMotion();
 
   return (
-    <main ref={root as RefObject<HTMLElement>} className="page-shell relative overflow-hidden bg-obsidian-deep text-ivory">
+    <main
+      ref={root as RefObject<HTMLElement>}
+      data-reduced-motion={reducedMotion || undefined}
+      className="page-shell relative overflow-hidden bg-obsidian-deep text-ivory"
+    >
       <div className="ambient-fog" />
       <Nav />
       <Hero />
