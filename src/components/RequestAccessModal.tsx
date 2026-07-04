@@ -6,9 +6,7 @@ const schema = z.object({
   name: z.string().trim().min(2, "Please share your full name.").max(80),
   email: z.string().trim().email("A reachable email is required.").max(160),
   organization: z.string().trim().min(2, "Which entity do you represent?").max(120),
-  horizon: z.enum(["1-3", "3-7", "7+"], {
-    errorMap: () => ({ message: "Select a time horizon." }),
-  }),
+  horizon: z.enum(["1-3", "3-7", "7+"], { message: "Select a time horizon." }),
   intent: z
     .string()
     .trim()
