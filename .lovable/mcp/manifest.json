@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "solena-mcp",
+      "version": "0.1.0",
+      "title": "Solena"
+    },
+    "tools": [
+      {
+        "name": "submit_request_access",
+        "title": "Submit Request Access",
+        "description": "Submit a Request Access inquiry to Solena on behalf of a prospective partner. Returns a confirmation payload the caller can relay back to the user.",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Full name of the person requesting access."
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$",
+              "description": "Contact email address."
+            },
+            "organization": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Company, brand, or institution name."
+            },
+            "horizon": {
+              "type": "string",
+              "enum": [
+                "1-3",
+                "3-7",
+                "7+"
+              ],
+              "description": "Engagement horizon in years: 1-3, 3-7, or 7+."
+            },
+            "intent": {
+              "type": "string",
+              "minLength": 30,
+              "description": "Description of intent, ambition, or the legacy to be built (min 30 chars)."
+            }
+          },
+          "required": [
+            "name",
+            "email",
+            "organization",
+            "horizon",
+            "intent"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_ecosystem",
+        "title": "Get Solena Ecosystem",
+        "description": "Return the sectors of the Solena orbital ecosystem — the domains Solena operates across.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "sector": {
+              "description": "Optional sector id to filter to a single sector.",
+              "type": "string"
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
