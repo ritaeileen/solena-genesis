@@ -196,6 +196,11 @@ export function RequestAccessModal({
                 <p className="max-w-sm text-sm leading-relaxed text-stone/62">
                   You will not receive an automated reply. If your trajectory intersects ours, contact will follow.
                 </p>
+                {success ? (
+                  <p className="text-[10px] tracking-eyebrow text-bronze/72">
+                    Reference · {success.reference}
+                  </p>
+                ) : null}
                 <button
                   type="button"
                   onClick={() => onOpenChange(false)}
