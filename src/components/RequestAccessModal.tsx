@@ -338,6 +338,11 @@ export function RequestAccessModal({
                   }
                 />
 
+                {submitError ? (
+                  <p role="alert" className="text-xs text-[oklch(0.72_0.14_28)]">
+                    {submitError}
+                  </p>
+                ) : null}
                 <div className="flex flex-col-reverse items-stretch gap-4 border-t border-ivory/10 pt-6 md:flex-row md:items-center md:justify-between">
                   <p className="text-[10px] tracking-eyebrow text-stone/44">
                     Not everyone will be reviewed
