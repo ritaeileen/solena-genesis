@@ -55,7 +55,9 @@ export function RequestAccessModal({
 }) {
   const [values, setValues] = useState<FormValues>(INITIAL);
   const [errors, setErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
-  const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [success, setSuccess] = useState<SuccessPayload | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const openedAtRef = useRef<number>(0);
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
@@ -65,6 +67,8 @@ export function RequestAccessModal({
       setStatus("idle");
       setErrors({});
       setValues(INITIAL);
+      setSuccess(null);
+      setSubmitError(null);
       // give Radix time to mount
       const t = setTimeout(() => firstFieldRef.current?.focus(), 60);
       return () => clearTimeout(t);
