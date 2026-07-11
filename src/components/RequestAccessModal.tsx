@@ -33,6 +33,11 @@ const INITIAL: FormValues = {
   website: "",
 };
 
+type SuccessPayload = {
+  reference: string;
+  received_at: string;
+};
+
 const HORIZONS: { value: "1-3" | "3-7" | "7+"; label: string }[] = [
   { value: "1-3", label: "1 – 3 years" },
   { value: "3-7", label: "3 – 7 years" },
@@ -50,7 +55,9 @@ export function RequestAccessModal({
 }) {
   const [values, setValues] = useState<FormValues>(INITIAL);
   const [errors, setErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
-  const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [success, setSuccess] = useState<SuccessPayload | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const openedAtRef = useRef<number>(0);
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
@@ -60,6 +67,8 @@ export function RequestAccessModal({
       setStatus("idle");
       setErrors({});
       setValues(INITIAL);
+      setSuccess(null);
+      setSubmitError(null);
       // give Radix time to mount
       const t = setTimeout(() => firstFieldRef.current?.focus(), 60);
       return () => clearTimeout(t);
@@ -73,9 +82,11 @@ export function RequestAccessModal({
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
 
     // Spam guards: honeypot + minimum dwell time (humans read the form).
     if (values.website.trim() !== "") {
+      setSuccess({ reference: "SOL-LOCAL", received_at: new Date().toISOString() });
       setStatus("success");
       return;
     }
@@ -102,9 +113,40 @@ export function RequestAccessModal({
     }
 
     setStatus("submitting");
-    // Simulated dispatch — real submission wiring is intentionally deferred.
-    await new Promise((r) => setTimeout(r, 900));
-    setStatus("success");
+    try {
+      const res = await fetch("/api/public/request-access", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          name: parsed.data.name,
+          email: parsed.data.email,
+          organization: parsed.data.organization,
+          horizon: parsed.data.horizon,
+          intent: parsed.data.intent,
+          website: values.website,
+          source: "landing",
+        }),
+      });
+      const body = (await res.json().catch(() => null)) as
+        | { ok: true; reference: string; received_at: string }
+        | { ok: false; message?: string }
+        | null;
+
+      if (!res.ok || !body || body.ok !== true) {
+        const message =
+          (body && body.ok === false && body.message) ||
+          "Transmission failed. Please try again in a moment.";
+        setSubmitError(message);
+        setStatus("error");
+        return;
+      }
+
+      setSuccess({ reference: body.reference, received_at: body.received_at });
+      setStatus("success");
+    } catch {
+      setSubmitError("Network unreachable. Please try again in a moment.");
+      setStatus("error");
+    }
   };
 
   return (
@@ -154,6 +196,11 @@ export function RequestAccessModal({
                 <p className="max-w-sm text-sm leading-relaxed text-stone/62">
                   You will not receive an automated reply. If your trajectory intersects ours, contact will follow.
                 </p>
+                {success ? (
+                  <p className="text-[10px] tracking-eyebrow text-bronze/72">
+                    Reference · {success.reference}
+                  </p>
+                ) : null}
                 <button
                   type="button"
                   onClick={() => onOpenChange(false)}
@@ -291,6 +338,11 @@ export function RequestAccessModal({
                   }
                 />
 
+                {submitError ? (
+                  <p role="alert" className="text-xs text-[oklch(0.72_0.14_28)]">
+                    {submitError}
+                  </p>
+                ) : null}
                 <div className="flex flex-col-reverse items-stretch gap-4 border-t border-ivory/10 pt-6 md:flex-row md:items-center md:justify-between">
                   <p className="text-[10px] tracking-eyebrow text-stone/44">
                     Not everyone will be reviewed
