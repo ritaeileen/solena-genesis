@@ -33,6 +33,11 @@ const INITIAL: FormValues = {
   website: "",
 };
 
+type SuccessPayload = {
+  reference: string;
+  received_at: string;
+};
+
 const HORIZONS: { value: "1-3" | "3-7" | "7+"; label: string }[] = [
   { value: "1-3", label: "1 – 3 years" },
   { value: "3-7", label: "3 – 7 years" },
